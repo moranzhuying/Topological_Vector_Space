@@ -4,12 +4,19 @@
 update_cwl.py — 从 structure.sty 自动提取数学符号，更新 TeXStudio 补全文件 custom.cwl
 
 用法：
-    python update_cwl.py [输出路径]
+    python update_cwl.py [输出路径] [-s 符号来源]
+    python update_cwl.py -s "D:\\路径\\structure.sty" "D:\\路径\\custom.cwl"
 
-输入：默认读取脚本同目录的 structure.sty（即当前笔记的样式包），
-      可用环境变量 NOTE_STRUCTURE 指定其他 structure.sty。
-输出：默认写入 %APPDATA%\\texstudio\\completion\\user\\custom.cwl；
-      取不到 APPDATA 时退回到脚本同目录下的 custom.cwl。可用首个命令行参数覆盖。
+符号来源按以下顺序确定（前者优先）：
+    1. 命令行 -s / --structure
+    2. 环境变量 NOTE_STRUCTURE
+    3. 脚本同目录的 .cwl_source 文件（首行写 structure.sty 的路径，可用 # 注释；
+       该文件不入版本控制，供「多本笔记共用同一套模板符号库」的场景使用）
+    4. 脚本同目录的 structure.sty（默认，自包含）
+
+输出默认写入 %APPDATA%\\texstudio\\completion\\user\\custom.cwl；
+取不到 APPDATA 时退回到脚本同目录下的 custom.cwl。
+
 逻辑：
     1. 只解析 structure.sty 的 [模块 VI]（数学符号定义库）部分；
     2. 提取其中所有 \\newcommand / \\renewcommand 的命令名（及行尾注释）；
@@ -19,25 +26,13 @@ update_cwl.py — 从 structure.sty 自动提取数学符号，更新 TeXStudio 
 
 改动 structure.sty 的符号后，运行本脚本即可同步；TeXStudio 重启后生效。
 """
+import argparse
 import os
 import re
 import sys
 import pathlib
 
-# 脚本所在目录：默认解析同目录的 structure.sty，可用环境变量 NOTE_STRUCTURE 覆盖
 SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
-STRUCTURE = os.environ.get("NOTE_STRUCTURE") or str(SCRIPT_DIR / "structure.sty")
-
-
-def default_cwl_path():
-    """TeXStudio 补全文件默认位置：由 %APPDATA% 推导，不写死用户路径。"""
-    appdata = os.environ.get("APPDATA")
-    if appdata:
-        return str(pathlib.Path(appdata) / "texstudio" / "completion" / "user" / "custom.cwl")
-    return str(SCRIPT_DIR / "custom.cwl")
-
-
-DEFAULT_CWL = default_cwl_path()
 
 # 只匹配 \newcommand 与 \renewcommand，命令名由字母组成（含 @）
 CMD_RE = re.compile(r"\\(?:re)?newcommand\{\\([A-Za-z@]+)\}")
@@ -47,6 +42,33 @@ COMMENT_RE = re.compile(r"%\s*(.+?)\s*$")
 # 自动生成段的起止标记
 AUTO_MARKER = "# ============ 自动生成段：structure.sty 数学符号 (update_cwl.py) ============"
 OLD_MARKER = "# Algebra symbols."
+
+
+def resolve_structure(cli_path=None):
+    """按优先级确定符号来源：命令行 > 环境变量 > .cwl_source > 脚本同目录。"""
+    if cli_path:
+        return pathlib.Path(cli_path)
+
+    env_path = os.environ.get("NOTE_STRUCTURE")
+    if env_path:
+        return pathlib.Path(env_path)
+
+    src = SCRIPT_DIR / ".cwl_source"
+    if src.is_file():
+        for line in src.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#"):
+                return pathlib.Path(line)
+
+    return SCRIPT_DIR / "structure.sty"
+
+
+def default_cwl_path():
+    """TeXStudio 补全文件默认位置：由 %APPDATA% 推导，不写死用户路径。"""
+    appdata = os.environ.get("APPDATA")
+    if appdata:
+        return str(pathlib.Path(appdata) / "texstudio" / "completion" / "user" / "custom.cwl")
+    return str(SCRIPT_DIR / "custom.cwl")
 
 
 def extract_symbols(structure_path):
@@ -81,8 +103,25 @@ def build_section(symbols):
 
 
 def main():
-    cwl_path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CWL
-    symbols = extract_symbols(STRUCTURE)
+    parser = argparse.ArgumentParser(
+        description="从 structure.sty 提取数学符号，更新 TeXStudio 补全文件 custom.cwl")
+    parser.add_argument(
+        "output", nargs="?", default=None,
+        help="输出 cwl 文件路径（默认为 TeXStudio 用户补全目录）")
+    parser.add_argument(
+        "-s", "--structure", default=None,
+        help="符号来源 structure.sty 的路径")
+    args = parser.parse_args()
+
+    structure = resolve_structure(args.structure)
+    if not structure.is_file():
+        print(f"找不到 structure.sty：{structure}")
+        print("可用 -s 指定路径，或设置环境变量 NOTE_STRUCTURE，")
+        print("或在脚本同目录建 .cwl_source 文件写入路径。")
+        return 1
+
+    cwl_path = args.output or default_cwl_path()
+    symbols = extract_symbols(structure)
     section = build_section(symbols)
 
     cwl = pathlib.Path(cwl_path)
@@ -95,12 +134,14 @@ def main():
             head = content.split(marker)[0]
             break
 
+    cwl.parent.mkdir(parents=True, exist_ok=True)
     new_content = head.rstrip() + "\n\n" + section + "\n"
     cwl.write_text(new_content, encoding="utf-8")
-    print(f"符号来源: {STRUCTURE}")
+    print(f"符号来源: {structure}")
     print(f"已更新 {cwl_path}")
     print(f"符号数量: {len(symbols)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
