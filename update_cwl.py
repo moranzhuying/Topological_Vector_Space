@@ -6,7 +6,10 @@ update_cwl.py — 从 structure.sty 自动提取数学符号，更新 TeXStudio 
 用法：
     python update_cwl.py [输出路径]
 
-默认输出：C:\\Users\\Administrator\\AppData\\Roaming\\texstudio\\completion\\user\\custom.cwl
+输入：默认读取脚本同目录的 structure.sty（即当前笔记的样式包），
+      可用环境变量 NOTE_STRUCTURE 指定其他 structure.sty。
+输出：默认写入 %APPDATA%\\texstudio\\completion\\user\\custom.cwl；
+      取不到 APPDATA 时退回到脚本同目录下的 custom.cwl。可用首个命令行参数覆盖。
 逻辑：
     1. 只解析 structure.sty 的 [模块 VI]（数学符号定义库）部分；
     2. 提取其中所有 \\newcommand / \\renewcommand 的命令名（及行尾注释）；
@@ -16,12 +19,25 @@ update_cwl.py — 从 structure.sty 自动提取数学符号，更新 TeXStudio 
 
 改动 structure.sty 的符号后，运行本脚本即可同步；TeXStudio 重启后生效。
 """
+import os
 import re
 import sys
 import pathlib
 
-STRUCTURE = r"D:\Note\LaTeX模板\笔记写作\structure.sty"
-DEFAULT_CWL = r"C:\Users\Administrator\AppData\Roaming\texstudio\completion\user\custom.cwl"
+# 脚本所在目录：默认解析同目录的 structure.sty，可用环境变量 NOTE_STRUCTURE 覆盖
+SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
+STRUCTURE = os.environ.get("NOTE_STRUCTURE") or str(SCRIPT_DIR / "structure.sty")
+
+
+def default_cwl_path():
+    """TeXStudio 补全文件默认位置：由 %APPDATA% 推导，不写死用户路径。"""
+    appdata = os.environ.get("APPDATA")
+    if appdata:
+        return str(pathlib.Path(appdata) / "texstudio" / "completion" / "user" / "custom.cwl")
+    return str(SCRIPT_DIR / "custom.cwl")
+
+
+DEFAULT_CWL = default_cwl_path()
 
 # 只匹配 \newcommand 与 \renewcommand，命令名由字母组成（含 @）
 CMD_RE = re.compile(r"\\(?:re)?newcommand\{\\([A-Za-z@]+)\}")
@@ -81,6 +97,7 @@ def main():
 
     new_content = head.rstrip() + "\n\n" + section + "\n"
     cwl.write_text(new_content, encoding="utf-8")
+    print(f"符号来源: {STRUCTURE}")
     print(f"已更新 {cwl_path}")
     print(f"符号数量: {len(symbols)}")
 
