@@ -1,0 +1,37 @@
+# ===== LaTeX 编译中间产物 =====
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+*.idx
+*.ind
+*.ilg
+*.xdv
+*.run.xml
+*-blx.bib
+
+# ===== 编译输出 PDF =====
+/main.pdf
+
+# ===== 备份文件 =====
+*.bak
+*.bak-*
+*.old
+
+# ===== 编辑器与系统文件 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
