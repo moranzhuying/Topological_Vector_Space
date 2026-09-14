@@ -25,7 +25,7 @@ quiver.sty        交换图支持
 Content/          分章正文，每章一个目录，由 index.tex 汇总 \input
 commit.py         一键提交并推送到 GitHub
 setup_mode.py     习题编排模式切换（独立习题集 / 章末习题）
-symbols.py        符号库管理：刷新补全 / 回填模板 / 分发到各笔记
+symbols.py        符号管理面板：提取 / 回填 / 清理未用符号 / 引入新记号
 ```
 
 ## 脚本
@@ -33,8 +33,8 @@ symbols.py        符号库管理：刷新补全 / 回填模板 / 分发到各�
 ```bash
 python commit.py "提交说明"    # 提交并推送，说明可省略（默认「更新笔记」）
 python setup_mode.py 1|2      # 切换习题编排模式
-python symbols.py                 # 预览符号库差异（路径见 symbols.conf）
-python symbols.py --all --write   # 回填模板 + 刷新补全 + 分发到各笔记
+python symbols.py                 # 符号管理面板（数字多选，如 1,3,5）
+python symbols.py --all --write   # 命令行模式：回填 + 刷新补全 + 分发
 ```
 
 ## 说明
