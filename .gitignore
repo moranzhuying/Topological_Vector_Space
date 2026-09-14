@@ -38,3 +38,4 @@ desktop.ini
 
 # ===== 本地工具配置（含本机路径，不入版本控制） =====
 .cwl_source
+symbols.conf
