@@ -446,22 +446,22 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\C}{\mathbb{C}}              % 复数集
 \newcommand{\K}{\mathbb{K}}              % 域
 \newcommand{\F}{\mathbb{F}}              % 有限域
-\renewcommand{\emptyset}{\varnothing}    % 更美观的空集
+\renewcommand{\emptyset}{\varnothing}    % 空集
 \newcommand{\fin}{\operatorname{Fin}}    % 有限
-\newcommand{\Coll}{\operatorname{Coll}}  % 集合族/集合汇集
+\newcommand{\Coll}{\operatorname{Coll}}  % 集化关系
 \newcommand{\FuncRel}{\operatorname{FuncRel}} % 函数关系
 \newcommand{\PFunc}{\operatorname{PFunc}} % 偏函数
 \newcommand{\Eq}{\operatorname{Eq}}      % 等价关系
 \newcommand{\id}{\operatorname{id}}      % 恒等变换
 \newcommand{\rank}{\operatorname{rank}}  % 秩
-\newcommand{\nul}{\operatorname{nul}}    % 零度 (Nullity)
+\newcommand{\nul}{\operatorname{nul}}    % 零度
 \newcommand{\Nul}{\operatorname{Nul}}    % 零空间
 \newcommand{\dom}{\operatorname{dom}}    % 定义域
-\newcommand{\im}{\operatorname{im}}      % 像 (Image)
+\newcommand{\im}{\operatorname{im}}      % 像
 \newcommand{\coim}{\operatorname{coim}}  % 陪像
 \newcommand{\coker}{\operatorname{coker}}% 陪核
-\newcommand{\tr}{\operatorname{tr}}      % 迹 (Trace)
-\newcommand{\Tr}{\operatorname{Tr}}      % 迹 (大写)
+\newcommand{\tr}{\operatorname{tr}}      % 模中的迹
+\newcommand{\Tr}{\operatorname{Tr}}      % 代数中的迹
 \newcommand{\diag}{\operatorname{diag}}  % 对角矩阵
 \newcommand{\codim}{\operatorname{codim}}% 余维数
 \newcommand{\row}{\operatorname{row}}    % 行空间
@@ -469,8 +469,8 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\Mat}{\operatorname{Mat}}    % 矩阵空间
 \newcommand{\am}{\operatorname{AM}}      % 代数重数
 \newcommand{\gm}{\operatorname{GM}}      % 几何重数
-\newcommand{\Ann}{\operatorname{Ann}}    % 零化子 (Annihilator)
-\newcommand{\Char}{\operatorname{Char}}  % 特征 (Characteristic)
+\newcommand{\Ann}{\operatorname{Ann}}    % 零化子
+\newcommand{\Char}{\operatorname{Char}}  % 特征
 \newcommand{\Min}{\operatorname{Min}}    % 最小多项式
 \newcommand{\piv}{\operatorname{piv}}    % 主元指数
 \newcommand{\Hom}{\operatorname{Hom}}    % 态射集
@@ -478,28 +478,27 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\Aut}{\operatorname{Aut}}    % 自同构
 \newcommand{\Isom}{\operatorname{Isom}}  % 同构
 \newcommand{\lcm}{\operatorname{lcm}}    % 最小公倍数
-\newcommand{\ord}{\operatorname{ord}}    % 阶 (Order)
+\newcommand{\ord}{\operatorname{ord}}    % 阶
 \newcommand{\op}{\operatorname{op}}      % 反对偶
 \newcommand{\Frac}{\operatorname{Frac}}  % 分式域
 \newcommand{\tor}{\operatorname{tor}}    % 挠
 \newcommand{\res}{\operatorname{res}}    % 残数/限制
 \newcommand{\rad}{\operatorname{rad}}    % 根
-\newcommand{\sign}{\operatorname{sign}}  % 符号函数
-\newcommand{\sgn}{\operatorname{sgn}}    % 符号函数
-\newcommand{\inv}{\operatorname{inv}}    % 逆/不变
+\newcommand{\sign}{\operatorname{sign}}  % 置换的符号
+\newcommand{\sgn}{\operatorname{sgn}}    % 有序群的元素符号
+\newcommand{\inv}{\operatorname{inv}}    % 逆序数
 \newcommand{\ev}{\operatorname{ev}}      % 赋值映射
 \newcommand{\Equ}{\operatorname{Equ}}    % 等价关系类
 \newcommand{\Res}{\operatorname{Res}}    % 结式,限制积
 \newcommand{\Rat}{\operatorname{Rat}}    % 有理性
-\newcommand{\aplus}{\mathbin{\bm{+}}}    % 粗体加号（代数重数等）
+\newcommand{\aplus}{\mathbin{\bm{+}}}    % 粗体加号
 \newcommand{\aminus}{\mathbin{\bm{-}}}   % 粗体减号
 \newcommand{\Der}{\operatorname{Der}}    % 导子
-\newcommand{\Lib}{\operatorname{Lib}}    % 自由对象相关记号
-\newcommand{\Libas}{\operatorname{Libas}}   % 自由代数相关记号
-\newcommand{\Libasc}{\operatorname{Libasc}} % 自由结合代数相关记号
+\newcommand{\Lib}{\operatorname{Lib}}    % 自由代数
+\newcommand{\Libas}{\operatorname{Libas}}   % 自由结合代数
+\newcommand{\Libasc}{\operatorname{Libasc}} % 自由交换结合代数
 \newcommand{\Stab}{\operatorname{Stab}}  % 稳定子
 \newcommand{\Fix}{\operatorname{Fix}}    % 不动点集
-\newcommand{\orbit}{\operatorname{orbit}}% 轨道
 \newcommand{\Ind}{\operatorname{Ind}}    % 诱导表示
 \newcommand{\Ad}{\operatorname{Ad}}      % 伴随表示
 \newcommand{\ad}{\operatorname{ad}}      % 伴随
@@ -507,13 +506,13 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\Int}{\operatorname{Int}}    % 内自同构
 \newcommand{\Grp}{\operatorname{Grp}}    % 群范畴
 \newcommand{\Mo}{\operatorname{Mo}}      % 幺半群相关记号
-\newcommand{\Mag}{\operatorname{Mag}}    % 原群 (magma)
+\newcommand{\Mag}{\operatorname{Mag}}    % 原群
 \newcommand{\Core}{\operatorname{Core}}  % 核心/正规核
 \newcommand{\bigast}{\mathop{\vcenter{\hbox{\scalebox{1.5}{$\ast$}}}}\displaylimits}      % 大星号算子
 \newcommand{\bigtop}{\mathop{\vcenter{\hbox{\scalebox{1.5}{$\top$}}}}\displaylimits}      % 大 top 算子
 \newcommand{\bigbot}{\mathop{\vcenter{\hbox{\scalebox{1.5}{$\bot$}}}}\displaylimits}      % 大 bot 算子
 \newcommand{\bigboxplus}{\mathop{\vcenter{\hbox{\scalebox{1.5}{$\boxplus$}}}}\displaylimits} % 大盒加算子
-\newcommand{\Shuffle}{\operatorname{Sf}} % shuffle 运算
+\newcommand{\Shuffle}{\operatorname{Sf}} % 洗牌置换
 \newcommand{\Pol}{\operatorname{Pol}}    % 多项式空间
 \newcommand{\mult}{\operatorname{mult}}  % 重数
 \newcommand{\Ratio}{\operatorname{Ratio}} % 比率/商
@@ -523,8 +522,8 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\GEig}{\operatorname{GEig}}  % 广义特征空间
 \newcommand{\Gram}{\operatorname{Gram}}  % Gram 矩阵
 \newcommand{\Sesq}{\operatorname{Sesq}}  % 半双线性形式
-\newcommand{\Tens}{\operatorname{Tens}}  % 交替张量
-\newcommand{\Alt}{\operatorname{Alt}}    % 交替张量
+\newcommand{\Tens}{\operatorname{Tens}}  % 张量
+\newcommand{\Alt}{\operatorname{Alt}}    % 交错张量
 \newcommand{\Sym}{\operatorname{Sym}}    % 对称张量
 \newcommand{\Bil}{\operatorname{Bil}}    % 双线性形式
 \newcommand{\SymBil}{\operatorname{SymBil}}   % 对称双线性形式
@@ -556,8 +555,8 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\Tran}{\operatorname{Tran}}  % 转移矩阵
 \newcommand{\str}{\operatorname{str}}    % 超迹
 \newcommand{\Aff}{\operatorname{Aff}}    % 仿射空间
-\newcommand{\Gr}{\operatorname{Gr}}      % 格拉斯曼流形
-\newcommand{\Pf}{\operatorname{Pf}}      % Pfaffian
+\newcommand{\Gr}{\operatorname{Gr}}      % 格拉斯曼簇
+\newcommand{\Pf}{\operatorname{Pf}}      % 普法夫量
 \newcommand{\Sp}{\operatorname{Sp}}      % 辛群
 \newcommand{\SU}{\operatorname{SU}}      % 特殊酉群
 \newcommand{\SO}{\operatorname{SO}}      % 特殊正交群
@@ -565,17 +564,17 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\SL}{\operatorname{SL}}      % 特殊线性群
 \newcommand{\GU}{\operatorname{GU}}      % 相似变换群
 \newcommand{\GSU}{\operatorname{GSU}}    % 特殊相似变换群
-\newcommand{\PGL}{\operatorname{PGL}}    % 一般线性群的投影化
+\newcommand{\PGL}{\operatorname{PGL}}    % 射影线性群
 \newcommand{\ind}{\operatorname{ind}}    % 指数
 \newcommand{\Dir}{\operatorname{Dir}}    % 方向
-\newcommand{\Herm}{\operatorname{Herm}}  % Hermitian 形式
-\newcommand{\SHerm}{\operatorname{SHerm}}% 对称 Hermitian 形式
-\newcommand{\AHerm}{\operatorname{AHerm}}% 反 Hermitian 形式
+\newcommand{\Herm}{\operatorname{Herm}}  % Hermitian形式
+\newcommand{\SHerm}{\operatorname{SHerm}}% 对称Hermitian形式
+\newcommand{\AHerm}{\operatorname{AHerm}}% 反Hermitian形式
 \newcommand{\Quad}{\operatorname{Quad}}  % 二次型
 \newcommand{\Disp}{\operatorname{Disp}}  % 位移
 \newcommand{\Sim}{\operatorname{Sim}}    % 相似变换
-\newcommand{\Cl}{\operatorname{Cl}}      % Clifford 代数/闭包
-\newcommand{\Spin}{\operatorname{Spin}}  % Spin 群
+\newcommand{\Cl}{\operatorname{Cl}}      % Clifford代数,闭包
+\newcommand{\Spin}{\operatorname{Spin}}  % 旋量群
 
 % -------- 6.3 分析 --------
 \newcommand{\limit}{\displaystyle\lim}   % 强制使用行间公式样式的极限
@@ -592,6 +591,10 @@ base_thmstyle, label type=sketch, colback=mainpurple!5!white, accent north=mainp
 \newcommand{\Fil}{\operatorname{Fil}}    % 滤子格（合并自 General_Topology）
 \newcommand{\Idl}{\operatorname{Idl}}    % 序理想格（合并自 General_Topology）
 \newcommand{\Sub}{\operatorname{Sub}}    % 子群格（合并自 General_Topology）
+\newcommand{\BProduit}{\mathop{\vcenter{\hbox{\scalebox{1.5}{$\mathsf{P}$}}}}\displaylimits}    % （合并自 General_Topology）
+\newcommand{\BSomme}{\mathop{\vcenter{\hbox{\scalebox{1.5}{$\mathsf{S}$}}}}\displaylimits}    % （合并自 General_Topology）
+\newcommand{\Orb}{\operatorname{Orb}}    % 轨道（合并自 General_Topology）
+\newcommand{\T}{\mathbb{T}}    % （合并自 General_Topology）
 
 
 % ================================================================
