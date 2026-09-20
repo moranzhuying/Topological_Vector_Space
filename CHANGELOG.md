@@ -6,6 +6,14 @@
 
 #### 9 月
 
+##### 2026-09-20
+
+**第 1 次提交**
+
+- 更新 commit.py（推送重试与诊断、--dry-run、--log 联动 CHANGELOG、提交前确认）
+- 重写 commit.md
+- 补 .gitignore 忽略 manager.conf
+
 ##### 2026-09-14
 
 **第 1 次提交**
