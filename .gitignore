@@ -42,3 +42,6 @@ symbols.conf
 symbols_extract.json
 notes_tree.json
 manager.conf
+
+# 本机专有词表（commit.py 提交前检查用，内含本机信息）
+.sensitive-words.txt

@@ -52,6 +52,78 @@ def classify(msg):
     return "config" if any(k.lower() in low for k in CONFIG_KEYS) else "content"
 
 
+# ---------------------------------------------------------------- 敏感信息检查
+#
+# 提交前把关：将要提交的新增内容里若出现本机路径或工作区专有词，直接中止提交。
+# 目的是让"别把本机信息推到公开仓库"从"靠记性"变成"靠机制"。
+#
+# 内置模式只放"任何机器上都算本机特征"的通用形态；具体到这台机器的词
+# （用户名、工作区目录名、笔记名等）请写进 .sensitive-words.txt ——
+# 那样既能覆盖，又不会让本文件自身变成新的泄露源。
+
+SENSITIVE_PATTERNS = (
+    (r"[A-Za-z]:\\+Users\\+[^\\\s\"'）)，。]+", "Windows 用户目录路径"),
+    (r"/(?:Users|home)/[A-Za-z0-9._-]{2,}", "Unix 用户目录路径"),
+)
+
+
+def load_sensitive_words():
+    r"""收集本机专有词表。
+
+    从脚本所在目录逐级向上（最多 4 级）把沿途遇到的 .sensitive-words.txt 全部合并：
+    工作区根目录放一份通用的，某个仓库内可再放一份该仓库专属的。
+    词表文件仅在本机使用，不纳入版本控制（已在 .gitignore 中）。
+    """
+    words = []
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(4):
+        f = os.path.join(d, ".sensitive-words.txt")
+        if os.path.isfile(f):
+            try:
+                with open(f, encoding="utf-8", errors="ignore") as fh:
+                    for ln in fh:
+                        ln = ln.strip()
+                        if ln and not ln.startswith("#"):
+                            words.append(ln)
+            except OSError:
+                pass
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return words
+
+
+def scan_sensitive():
+    r"""扫描暂存区里**新增的行**，返回 [(文件, 类别, 片段)]。
+
+    只查新增行：被删掉的内容不会造成泄露，这样「清理本机信息」这类提交不会被误拦。
+    """
+    ok, out, _ = git(["diff", "--cached", "--unified=0"])
+    if not ok or not out:
+        return []
+    words = load_sensitive_words()
+    hits = []
+    cur = ""
+    for ln in out.splitlines():
+        if ln.startswith("+++ b/"):
+            cur = ln[6:]
+            continue
+        if not ln.startswith("+") or ln.startswith("+++"):
+            continue
+        text = ln[1:]
+        for pat, label in SENSITIVE_PATTERNS:
+            if re.search(pat, text):
+                hits.append((cur, label, text.strip()))
+                break
+        else:
+            for w in words:
+                if w in text:
+                    hits.append((cur, "专有词「%s」" % w, text.strip()))
+                    break
+    return hits
+
+
 def update_changelog(path, msg, mode):
     """把提交说明写入 CHANGELOG.md 对应日期下，返回 (是否写入, 说明)。"""
     if not os.path.isfile(path):
@@ -227,20 +299,35 @@ def main():
             print("已取消。")
             return 0
 
-    # 4) 暂存与提交
+    # 4) 暂存
     print("\n==> 暂存改动")
     ok, _, err = git(["add", "-A"])
     if not ok:
         print(f"[错误] 暂存失败：\n  {err}")
         return 1
 
+    # 5) 敏感信息检查：命中即中止，既不提交也不推送
+    hits = scan_sensitive()
+    if hits:
+        print(f"\n[中止] 待提交内容里有 {len(hits)} 处本机信息：")
+        for path, label, text in hits[:15]:
+            print(f"  {path}  [{label}]")
+            print(f"      {text[:100]}")
+        if len(hits) > 15:
+            print(f"  …（其余 {len(hits) - 15} 处）")
+        print("\n处理办法：把这些内容改掉或删掉，再重新运行本脚本。")
+        print("若已确认无误、确实要提交，可绕开本检查：")
+        print('  git commit -m "说明" && git push')
+        return 1
+
+    # 6) 提交
     print(f"==> 提交：{msg}")
     ok, _, err = git(["commit", "-m", msg])
     if not ok:
         print(f"[错误] 提交失败：\n  {err}")
         return 1
 
-    # 5) 推送（失败时重试、尝试备选通道，并明确告知本地已提交）
+    # 7) 推送（失败时重试、尝试备选通道，并明确告知本地已提交）
     print("==> 推送到 GitHub")
     ok, info = push_with_fallback()
     if not ok:
