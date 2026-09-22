@@ -247,6 +247,22 @@ def main():
         print(USAGE)
         return 0
 
+    # --check：供 git 钩子（.git/hooks/pre-commit）调用，只检查不提交。
+    # 有了它，就算绕开本脚本直接 `git commit`，暂存区里的本机信息照样会被拦下。
+    if "--check" in argv:
+        hits = scan_sensitive()
+        if not hits:
+            return 0
+        p = sys.stderr
+        p.write("[中止] 待提交内容里有 %d 处本机信息：\n" % len(hits))
+        for path, label, text in hits[:15]:
+            p.write("  %s  [%s]\n      %s\n" % (path, label, text[:100]))
+        if len(hits) > 15:
+            p.write("  …（其余 %d 处）\n" % (len(hits) - 15))
+        p.write("\n本次提交已中止。请改掉这些内容后重新提交；\n")
+        p.write("确需强行提交可用：git commit --no-verify\n")
+        return 1
+
     dry = "--dry-run" in argv
     yes = "-y" in argv
     log_mode = None
