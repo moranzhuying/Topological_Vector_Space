@@ -121,6 +121,19 @@
 \renewcommand{\thepart}{\arabic{part}}      % 部分号用阿拉伯数字（1、2、3…）
 \counterwithin{chapter}{part}               % 章号随部分重置，并自动改写 \thechapter
 
+% -------- 3.1.2 章内附录 --------
+% 本模板的「附录」是部分内的一个章（编号紧接该部分的章号之后，如 1.8）。
+% 但直接写 \chapter 会显示成「Chapter 1.8 附录: XXX」——「Chapter」与「附录」两种身份
+% 挤在一行，冗长且不美。改用 \appendixchapter{标题}，显示为「附录 1.8：XXX」，
+% 并且照样进目录、进 PDF 书签、能被 \ref / \cref 引用。
+\newcommand{\appendixchapter}[1]{%
+    \refstepcounter{chapter}%                    % 占用一个章号，供交叉引用
+    \phantomsection%                             % 让 hyperref 在此建立书签锚点
+    \chapter*{附录 \thechapter：#1}%              % 标题行不出现「Chapter」
+    \addcontentsline{toc}{chapter}{附录 \thechapter：#1}%   写入目录（书签随之生成）
+    \markboth{附录 \thechapter}{附录 \thechapter}%          页眉同步
+}
+
 % -------- 3.2 Section 格式 (titlesec) --------
 \usepackage{titlesec}
 \titleformat{\section}
