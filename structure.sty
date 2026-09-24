@@ -115,11 +115,23 @@
 % -------- 3.1.1 编号方案：章号按「部分」独立计数 --------
 % 本模板用 \part 表示原著的一个「部分」。若章号全局递增，写到后面会有上百章，
 % 引用时「第 87 章」这类编号极难辨认；改为**按部分重新计数**后，章号形如 2.1、2.2……
-% 定理编号沿用 mathcount（number within=chapter），会自动跟着变成 2.1.7；
-% section 同理变成 2.1.3。因此除本段外，其余编号设置无需改动。
+% 定理编号沿用 mathcount（随章重置），会自动跟着变成 2.1.7；section 同理变成 2.1.3。
+% 因此除本段与 4.3 的两处条件式外，其余编号设置无需改动。
 % 部分号与章号统一用阿拉伯数字，避免罗马数字与阿拉伯数字混排（如 I.3.1）看着别扭。
+%
+% 也可以**不写 \part**（整本书直接按 章—节—小节 组织）。这时 part 计数为 0，
+% 若照搬「部分号.章号」就会得到「第 0.1 章」—— 所以章号写成条件式：
+% 有 \part 时形如 2.1，没有 \part 时退回全书递增的 1、2、3。
 \renewcommand{\thepart}{\arabic{part}}      % 部分号用阿拉伯数字（1、2、3…）
-\counterwithin{chapter}{part}               % 章号随部分重置，并自动改写 \thechapter
+\counterwithin{chapter}{part}               % 章号随部分重置
+\renewcommand{\thechapter}{%
+    \ifnum\value{part}>0 \thepart.\arabic{chapter}\else \arabic{chapter}\fi
+}
+% 节号：book.cls 恒定写成「章号.节号」，没有章时会出现「0.1」，所以也加同样的条件
+% （subsection 及更深层沿用 book.cls 的写法，会自动跟着变）。
+\renewcommand{\thesection}{%
+    \ifnum\value{chapter}>0 \thechapter.\arabic{section}\else \arabic{section}\fi
+}
 
 % -------- 3.1.2 章内附录 --------
 % 本模板的「附录」是部分内的一个章，但**编号与章分开**：附录在同一个部分下自成序列
@@ -127,7 +139,9 @@
 % 对象，靠名称前缀区分。
 % 用 \appendixchapter{标题} 代替 \chapter{附录:标题}；标题留空则显示「附录 1.1」。
 \newcounter{apx}[part]                          % 附录计数器，随部分重置
-\renewcommand{\theapx}{\thepart.\arabic{apx}}   % 形如 1.1
+\renewcommand{\theapx}{%                        % 形如 1.1；没有 \part 时就是 1、2…
+    \ifnum\value{part}>0 \thepart.\arabic{apx}\else \arabic{apx}\fi
+}
 
 \newcommand{\appendixchapter}[1]{%
     \refstepcounter{apx}%                        % 走附录自己的计数器，不占用章号
@@ -202,6 +216,8 @@
 
 % -------- 4.3 统一计数器 --------
 % 所有定理环境共用 mathcount 计数器，按 chapter 编号（如 1.1、1.2、...）。
+% 编号由 newtcbtheorem 的 number within=chapter 生成（形如「章号.序号」），
+% 所以这里的表示与它保持一致；章号本身则由 3.1.1 的条件式给出。
 \newcounter{mathcount}[chapter]
 \renewcommand{\themathcount}{\thechapter.\arabic{mathcount}}
 
